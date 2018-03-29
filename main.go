@@ -21,6 +21,7 @@ func run() error {
 	}
 
 	defer sdl.Quit()
+	
 	w, r, err := sdl.CreateWindowAndRenderer(800, 600, sdl.WINDOW_SHOWN)
 	if err != nil {
 		return fmt.Errorf("could not create window: %v", err)
