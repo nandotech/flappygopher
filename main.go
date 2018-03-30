@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/veandco/go-sdl2/img"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
@@ -33,7 +35,6 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("could not create window: %v", err)
 	}
-
 	defer w.Destroy()
 
 	if err := drawTitle(r); err != nil {
@@ -41,12 +42,35 @@ func run() error {
 	}
 	time.Sleep(5 * time.Second)
 
+	if err := drawBackground(r); err != nil {
+		return fmt.Errorf("could not draw background: %v", err)
+	}
+	time.Sleep(5 * time.Second)
+
+	return nil
+}
+
+func drawBackground(r *sdl.Renderer) error {
+	r.Clear()
+
+	t, err := img.LoadTexture(r, "res/imgs/background.png")
+	if err != nil {
+		return fmt.Errorf("could not load background image: %v", err)
+	}
+	defer t.Destroy()
+
+	if err := r.Copy(t, nil, nil); err != nil {
+		return fmt.Errorf("could not copy background: %v", err)
+	}
+
+	r.Present()
+
 	return nil
 }
 
 func drawTitle(r *sdl.Renderer) error {
 	r.Clear()
-	
+
 	f, err := ttf.OpenFont("res/fonts/Flappy.ttf", 20)
 	if err != nil {
 		return fmt.Errorf("could not load font: %v", err)
