@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
@@ -31,16 +33,25 @@ func newScene(r *sdl.Renderer) (*scene, error) {
 	return &scene{bg: bg, birds: birds}, nil
 }
 
-func (s *scene) run(r *sdl.Renderer) chan error {
+func (s *scene) run(ctx context.Context, r *sdl.Renderer) chan error {
 	errc := make(chan error)
+
 	go func() {
-		for {
-			if err := s.paint(r); err != nil {
-				errc <- err
+		defer close(errc)
+		for range time.Tick(10 * time.Millisecond) {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					if err := s.paint(r); err != nil {
+						errc <- err
+					}
+				}
 			}
 		}
 	}()
-		return errc
+	return errc
 }
 
 func (s *scene) paint(r *sdl.Renderer) error {
@@ -52,7 +63,7 @@ func (s *scene) paint(r *sdl.Renderer) error {
 	}
 
 	rect := &sdl.Rect{X: 10, Y: 300 - 43/2, W: 50, H: 43}
-	i := s.time % len(s.birds)
+	i := s.time / 10 % len(s.birds)
 
 	if err := r.Copy(s.birds[i], nil, rect); err != nil {
 		return fmt.Errorf("could not copy background: %v", err)

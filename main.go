@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
@@ -46,9 +47,12 @@ func run() error {
 	}
 	defer s.destroy()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	select {
-	case <-s.run(r):
-		return fmt.Errorf("could not paint scene: %v", err)
+	case err := <-s.run(ctx, r):
+		return err
 	case <-time.After(5 * time.Second):
 		return nil
 	}
