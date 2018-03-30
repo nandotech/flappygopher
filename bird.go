@@ -25,3 +25,21 @@ func newBird(r *sdl.Renderer) (*bird, error) {
 	}
 	return &bird{textures: textures}, nil
 }
+
+func (b *bird) paint(r *sdl.Renderer) error {
+	b.time++
+
+	rect := &sdl.Rect{X: 10, Y: 300 - 43/2, W: 50, H: 43}
+	i := b.time / 10 % len(b.textures)
+
+	if err := r.Copy(b.textures[i], nil, rect); err != nil {
+		return fmt.Errorf("could not copy background: %v", err)
+	}
+	return nil
+}
+
+func (b *bird) destroy() {
+	for _, t := range b.textures {
+		t.Destroy()
+	}
+}
