@@ -21,15 +21,7 @@ func newScene(r *sdl.Renderer) (*scene, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not load background image: %v", err)
 	}
-	var birds []*sdl.Texture
-	for i := 1; i <= 4; i++ {
-		path := fmt.Sprintf("res/imgs/bird_frame_%d.png", i)
-		bird, err := img.LoadTexture(r, path)
-		if err != nil {
-			return nil, fmt.Errorf("could not load bird frame: %v", err)
-		}
-		birds = append(birds, bird)
-	}
+
 	return &scene{bg: bg, birds: birds}, nil
 }
 
