@@ -38,18 +38,21 @@ func run() error {
 	if err := drawTitle(r); err != nil {
 		return fmt.Errorf("could not draw title: %v", err)
 	}
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	s, err := newScene(r)
 	if err != nil {
 		return fmt.Errorf("could not create scene: %v", err)
 	}
 	defer s.destroy()
-	if err := s.paint(r); err != nil {
+
+	select {
+	case <-s.run(r):
 		return fmt.Errorf("could not paint scene: %v", err)
+	case <-time.After(5 * time.Second):
+		return nil
 	}
-	time.Sleep(5 * time.Second)
-	return nil
+
 }
 
 func drawTitle(r *sdl.Renderer) error {
