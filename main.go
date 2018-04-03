@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
@@ -39,7 +38,7 @@ func run() error {
 	if err := drawTitle(r); err != nil {
 		return fmt.Errorf("could not draw title: %v", err)
 	}
-	time.Sleep(1 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	s, err := newScene(r)
 	if err != nil {
@@ -47,10 +46,14 @@ func run() error {
 	}
 	defer s.destroy()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	time.AfterFunc(5*time.Second, cancel)
+	events := make(chan sdl.Event)
+	go func() {
+		for {
+			events <- sdl.WaitEvent()
+		}
+	}()
 
-	return <-s.run(ctx, r)
+	return <-s.run(events, r)
 
 }
 
