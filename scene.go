@@ -100,6 +100,7 @@ func (s *scene) paint(r *sdl.Renderer) error {
 func (s *scene) update() {
 	s.birds.update()
 	s.pipe.update()
+	s.birds.touch(s.pipe)
 }
 
 func (s *scene) restart() {
