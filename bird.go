@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
@@ -10,10 +11,13 @@ import (
 const gravity = .1
 
 type bird struct {
+	mu sync.RWMutex
+
 	time     int
 	textures []*sdl.Texture
-
 	y, speed float64
+
+	dead bool
 }
 
 func newBird(r *sdl.Renderer) (*bird, error) {
@@ -31,15 +35,8 @@ func newBird(r *sdl.Renderer) (*bird, error) {
 }
 
 func (b *bird) paint(r *sdl.Renderer) error {
-	b.time++
-	b.y -= b.speed
-	// Reset our bird to center screen
-	if b.y < 0 {
-		b.speed = -b.speed
-		b.y = 0
-	}
-	b.speed += gravity
-
+	b.mu.RLock()
+	defer b.mu.RUnlock()
 	rect := &sdl.Rect{X: 10, Y: (600 - int32(b.y)) - 43/2, W: 50, H: 43}
 	i := b.time / 10 % len(b.textures)
 
@@ -50,10 +47,44 @@ func (b *bird) paint(r *sdl.Renderer) error {
 }
 
 func (b *bird) jump() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	b.speed = -5
 }
 
+func (b *bird) update() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.time++
+	b.y -= b.speed
+	// Reset our bird to center screen
+	if b.y < 0 {
+		b.speed = -b.speed
+		b.y = 0
+		b.dead = true
+	}
+	b.speed += gravity
+}
+
+func (b *bird) isDead() bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+
+	return b.dead
+}
+
+func (b *bird) restart() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	b.y = 300
+	b.speed = 0
+	b.dead = false
+}
+
 func (b *bird) destroy() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	for _, t := range b.textures {
 		t.Destroy()
 	}
