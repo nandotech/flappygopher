@@ -46,14 +46,32 @@ func run() error {
 	}
 	defer s.destroy()
 
-	events := make(chan sdl.Event)
-	go func() {
-		for {
-			events <- sdl.WaitEvent()
-		}
-	}()
+	// Below code substituted for below
+	// Previous version of Go presented bug
+	/*
+		events := make(chan sdl.Event)
+		go func() {
+			for {
+				events <- sdl.WaitEvent()
+			}
+		}()
 
-	return <-s.run(events, r)
+		return <-s.run(events, r)
+	*/
+
+	events := make(chan sdl.Event)
+	errc := s.run(events, r)
+
+	// Unneeded to prevent crashes, in jff #7 example
+	// runtime.LockOSThread()
+
+	for {
+		select {
+		case events <- sdl.WaitEvent():
+		case err := <-errc:
+			return err
+		}
+	}
 
 }
 
