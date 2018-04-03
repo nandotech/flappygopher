@@ -49,7 +49,7 @@ func (b *bird) paint(r *sdl.Renderer) error {
 func (b *bird) jump() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	b.speed = -5
+	b.speed = -3
 }
 
 func (b *bird) update() {
@@ -94,8 +94,6 @@ func (b *bird) destroy() {
 func (b *bird) touch(p *pipe) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	p.mu.RLock()
-	defer p.mu.RUnlock()
 
 	//too far right
 	if p.x > b.x+b.w {
@@ -106,7 +104,10 @@ func (b *bird) touch(p *pipe) {
 		return
 	}
 	// too low
-	if p.h < b.y-(b.h/2) {
+	if !p.inverted && p.h < b.y-(b.h/2) {
+		return
+	}
+	if p.inverted && (600-p.h) > b.y+b.h/2 {
 		return
 	}
 	b.dead = true
