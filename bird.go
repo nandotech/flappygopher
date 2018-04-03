@@ -33,7 +33,7 @@ func newBird(r *sdl.Renderer) (*bird, error) {
 func (b *bird) paint(r *sdl.Renderer) error {
 	b.time++
 	b.y -= b.speed
-	// Reset our bird to center screen 
+	// Reset our bird to center screen
 	if b.y < 0 {
 		b.speed = -b.speed
 		b.y = 0
@@ -47,6 +47,10 @@ func (b *bird) paint(r *sdl.Renderer) error {
 		return fmt.Errorf("could not copy background: %v", err)
 	}
 	return nil
+}
+
+func (b *bird) jump() {
+	b.speed = -5
 }
 
 func (b *bird) destroy() {
