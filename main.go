@@ -48,7 +48,7 @@ func run() error {
 
 	// Below code substituted for below
 	// Previous version of Go presented bug
-	/*
+
 		events := make(chan sdl.Event)
 		go func() {
 			for {
@@ -57,21 +57,21 @@ func run() error {
 		}()
 
 		return <-s.run(events, r)
-	*/
 
-	events := make(chan sdl.Event)
-	errc := s.run(events, r)
 
-	// Unneeded to prevent crashes, in jff #7 example
-	// runtime.LockOSThread()
+	// events := make(chan sdl.Event)
+	// errc := s.run(events, r)
 
-	for {
-		select {
-		case events <- sdl.WaitEvent():
-		case err := <-errc:
-			return err
-		}
-	}
+	// // Unneeded to prevent crashes, in jff #7 example
+	// // runtime.LockOSThread()
+
+	// for {
+	// 	select {
+	// 	case events <- sdl.WaitEvent():
+	// 	case err := <-errc:
+	// 		return err
+	// 	}
+	// }
 
 }
 
