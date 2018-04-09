@@ -1,4 +1,6 @@
 # Flappy Gopher
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnandotech%2Fflappygopher.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnandotech%2Fflappygopher?ref=badge_shield)
+
 
 #### Flappy Gopher is a clone of the game Flappy Bird written in `Go`.
 
@@ -17,3 +19,6 @@ Please do check out his work and the Just For Func video series on YouTube is ph
 ##### Also follow Francesc on Twitter at https://twitter.com/francesc
 
 _Much credit & appreciation to Francesc for all his work on Just For Func._
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnandotech%2Fflappygopher.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnandotech%2Fflappygopher?ref=badge_large)
